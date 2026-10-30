@@ -8,12 +8,12 @@ pipeline {
             steps { checkout scm }
         }
         stage('Build Docker Image') {
-            steps { sh 'docker compose build' }
+            steps { sh 'docker-compose build' }
         }
         stage('Deploy Containers') {
             steps {
-                sh 'docker compose down || true'
-                sh 'docker compose up -d'
+                sh 'docker-compose down || true'
+                sh 'docker-compose up -d'
             }
         }
         stage('Verify Application') {
@@ -25,13 +25,13 @@ pipeline {
                   fi
                   echo "Waiting for app... ($i)"; sleep 5
                 done
-                echo "Application not reachable"; docker compose logs; exit 1
+                echo "Application not reachable"; docker-compose logs; exit 1
                 '''
             }
         }
     }
     post {
         success { echo 'Deployed: http://localhost:8000' }
-        failure { sh 'docker compose logs --tail=50 || true' }
+        failure { sh 'docker-compose logs --tail=50 || true' }
     }
 }
